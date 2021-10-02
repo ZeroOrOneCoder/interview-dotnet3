@@ -1,137 +1,121 @@
-﻿using System;
+﻿using GroceryStoreAPI.Models;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using GroceryStoreAPI.Models;
-using Newtonsoft.Json;
 
 namespace GroceryStoreAPI.Data
 {
-    public class AccessJSON
+    public class AccessJSON : IDataAccess
     {
-        private static string filePath = "database.json";
+        //TODO: this needs to be retrieved from appsetings.json
+        private string connection = "database.json";
 
-        public AccessJSON()
+        public string Connection { set { connection = value; }}
+       
+        private CustomerList ReadJsonFile()
         {
-        }
-        public AccessJSON(string FilePath)
-        {
-            filePath = FilePath;
-        }
-
-        private List<customer> ReadJsonFile()
-        {
-            using (StreamReader sr = new StreamReader(filePath))
+            using (StreamReader sr = new StreamReader(connection))
             {
                 string data = sr.ReadToEnd();
-                //return JsonConvert.DeserializeObject<List<Customer>>(data);
-                return JsonConvert.DeserializeObject<List<customer>>(data);
+                //return JsonConvert.DeserializeObject<CustomerList>(data);
+                return JsonConvert.DeserializeObject<CustomerList>(data);
 
             }
         }
 
-        private void WriteJsonFile(List<customer> customers)
+        private void WriteJsonFile(CustomerList customers)
         {
             string data = JsonConvert.SerializeObject(customers);
-            using (StreamWriter sw = new StreamWriter(filePath, false))
+            using (StreamWriter sw = new StreamWriter(connection, false))
             {
                 sw.Write(data);
             }
         }
 
-        public List<customer> GetAll()
+        public List<Customer> GetAll()
         {
-            List<customer> customers = ReadJsonFile();
-            return customers;
+            CustomerList cList = ReadJsonFile();
+            return cList.Customers;
         }
 
-        public List<customer> GetItemById(int id)
+        public Customer GetItemById(int id)
         {
-            List<customer> output = new List<customer>();
-            List<customer> customers = ReadJsonFile();
-            foreach (customer c in customers)
+            Customer output = null;
+            CustomerList cList = ReadJsonFile();
+            foreach (Customer c in cList.Customers)
             {
                 if (c.id == id)
                 {
-                    output.Add(c);
+                    output = c;
                     break;
                 }
             }
             return output;
         }
 
-        public bool UpdateItem(customer customer)
+        public Customer AddItem(string custName)
+        {
+            Customer output = null;
+            CustomerList cList = ReadJsonFile();
+            CompareCustomer compareCust = new CompareCustomer();
+            cList.Customers.Sort((IComparer<Customer>)compareCust);
+            int Id = cList.Customers[cList.Customers.Count - 1].id + 1;
+            output = new Customer(Id, custName);
+
+            cList.Customers.Add(output);
+
+            WriteJsonFile(cList);
+            return output;
+        }
+        public bool UpdateItem(Customer customer)
         {
             bool updated = false;
-            List<customer> customers = ReadJsonFile();
-            foreach (customer c in customers)
+            CustomerList cList = ReadJsonFile();
+            foreach (Customer c in cList.Customers)
             {
                 if (c.id == customer.id)
                 {
                     c.name = customer.name;
-                    break;
-                }
-            }
-            string data = JsonConvert.SerializeObject(customers);
-            using (StreamWriter sw = new StreamWriter(filePath, false))
-            {
-                sw.Write(data);
-            }
-            updated = true;
-            return updated;
-        }
+                    updated = true;
 
-        public bool DeleteItem(customer customer)
-        {
-            List<customer> customers = ReadJsonFile();
-            foreach (customer c in customers)
-            {
-                if (c.id == customer.id)
-                {
-                    customers.Remove(c);
                     break;
                 }
             }
-            WriteJsonFile(customers);
-            return true;
+            if (updated)
+            {
+                string data = JsonConvert.SerializeObject(cList);
+                using (StreamWriter sw = new StreamWriter(connection, false))
+                {
+                    sw.Write(data);
+                }
+            }
+            return updated;
         }
 
         public bool DeleteItemById(int id)
         {
-            List<customer> customers = ReadJsonFile();
-            foreach (customer c in customers)
+            bool Deleted = false;
+            CustomerList cList = ReadJsonFile();
+            foreach (Customer c in cList.Customers)
             {
                 if (c.id == id)
                 {
-                    customers.Remove(c);
+                    cList.Customers.Remove(c);
+                    Deleted = true;
                     break;
                 }
             }
-            WriteJsonFile(customers);
-            return true;
+            if (Deleted)
+            {
+                WriteJsonFile(cList);
+            }
+            return Deleted;
         }
-        
 
-        public List<customer> AddItem(string custName)
+        internal class CompareCustomer : IComparer<Customer>
         {
-            List<customer> output = new List<customer>();
-            List<customer> customers = ReadJsonFile();
-            CompareCustomer compareCust = new CompareCustomer();
-            customers.Sort((IComparer<customer>)compareCust);
-            int Id = customers[customers.Count - 1].id + 1;
-            customer newCust = new customer(Id, custName);            
-            output.Add(newCust);
-            customers.Add(newCust);
-
-            WriteJsonFile(customers);
-            return output;
-        }
-        
-        internal class CompareCustomer : IComparer<customer>
-        {
-            public int Compare([AllowNull] customer x, [AllowNull] customer y)
+            public int Compare([AllowNull] Customer x, [AllowNull] Customer y)
             {
                 return x.id.CompareTo(y.id);
             }

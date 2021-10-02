@@ -1,10 +1,11 @@
+using GroceryStoreAPI.Data;
+using GroceryStoreAPI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json;
-using GroceryStoreAPI.Services;
+using Microsoft.OpenApi.Models;
 
 namespace GroceryStoreAPI
 {
@@ -20,8 +21,14 @@ namespace GroceryStoreAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "GroceryStoreAPI", Version = "v1" });
+            });
             services.AddControllers();
             services.AddTransient<ICustomerService, CustomerService>();
+            services.AddTransient<IDataAccess, AccessJSON>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +52,11 @@ namespace GroceryStoreAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "GroceryStoreAPI V1");
             });
         }
     }

@@ -1,18 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 
 namespace GroceryStoreAPI.Models
 {
-    public class customer
+    public class Customer
     {
-        public customer(int cid, string cname)
+        public Customer(int cid, string cname)
         {
             id = cid;
             name = cname;
         }
+        [Required]
+        [JsonRequired]
+        [JsonProperty("id")]
         public int id { get; set; }
+
+        [Required]
+        [JsonRequired]
+        [JsonProperty("name")]
         public string name { get; set; }
     }
 }

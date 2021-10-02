@@ -1,39 +1,36 @@
-﻿using GroceryStoreAPI.Models;
-using System;
+﻿using GroceryStoreAPI.Data;
+using GroceryStoreAPI.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GroceryStoreAPI.Data;
 
 namespace GroceryStoreAPI.Services
 {
     public class CustomerService : ICustomerService
     {
-        private readonly AccessJSON aj;
-        public CustomerService(AccessJSON accessJson)
+        private readonly IDataAccess _acessJson;
+        public CustomerService(IDataAccess dataAccess)
         {
-            aj = accessJson;
+            _acessJson = dataAccess;
         }
 
-        public List<customer> GetCustomerById(int id)
+        public Customer GetCustomerById(int id)
         {
-            return aj.GetItemById(id);
+            return _acessJson.GetItemById(id);
         }
 
-        public List<customer> GetCustomers()
+        public List<Customer> GetCustomers()
         {
-            return aj.GetAll();
+            return _acessJson.GetAll();
         }
 
-        public List<customer> AddCustomer(string custName)
+        public Customer AddCustomer(string custName)
         {
-            return aj.AddItem(custName);
+            return _acessJson.AddItem(custName);
         }
 
         public bool UpdateCustomer(int id, string name)
         {
-            customer c = new customer(id, name);
-            return aj.UpdateItem(c);
+            Customer c = new Customer(id, name);
+            return _acessJson.UpdateItem(c);
         }
 
         //public bool DeleteCustomer(Customer c)
@@ -43,7 +40,7 @@ namespace GroceryStoreAPI.Services
 
         public bool DeleteCustomerById(int id)
         {
-            return aj.DeleteItemById(id);
+            return _acessJson.DeleteItemById(id);
         }
     }
 }

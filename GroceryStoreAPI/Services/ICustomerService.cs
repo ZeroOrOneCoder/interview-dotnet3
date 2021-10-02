@@ -1,18 +1,15 @@
-﻿using System;
+﻿using GroceryStoreAPI.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using GroceryStoreAPI.Models;
 
 namespace GroceryStoreAPI.Services
 {
     public interface ICustomerService
     {
-        public List<customer> GetCustomers();
+        public List<Customer> GetCustomers();
 
-        public List<customer> GetCustomerById(int id);
-       
-        public List<customer> AddCustomer(string custName);
+        public Customer GetCustomerById(int id);
+
+        public Customer AddCustomer(string custName);
 
         public bool UpdateCustomer(int id, string name);
 
