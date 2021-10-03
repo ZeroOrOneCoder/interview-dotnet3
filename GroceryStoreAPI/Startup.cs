@@ -1,5 +1,6 @@
 using GroceryStoreAPI.Data;
 using GroceryStoreAPI.Services;
+using GroceryStoreAPI.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +17,7 @@ namespace GroceryStoreAPI
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public IConfiguration Configuration { get; set; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -29,6 +30,12 @@ namespace GroceryStoreAPI
             services.AddTransient<ICustomerService, CustomerService>();
             services.AddTransient<IDataAccess, AccessJSON>();
 
+            //services.AddMvc();
+            //Add functionality to inject IOptions<T>
+            //services.AddOptions();
+
+            // Add our Config object so it can be injected
+            //services.Configure<DataAccessSettings>(Configuration.GetSection("DataAccessSettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -42,6 +49,12 @@ namespace GroceryStoreAPI
             {
                 app.UseExceptionHandler("/error");
             }
+
+            var builder = new ConfigurationBuilder()
+            .SetBasePath(env.ContentRootPath)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            Configuration = builder.Build();
 
             app.UseHttpsRedirection();
 

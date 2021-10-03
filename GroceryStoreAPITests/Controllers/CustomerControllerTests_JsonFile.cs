@@ -2,25 +2,34 @@
 using GroceryStoreAPI.Models;
 using GroceryStoreAPI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.IO;
 
 namespace GroceryStoreAPI.Controllers.Tests
 {
     [TestClass()]
     public class CustomerControllerTests_JsonFile
     {
-        private string filePath = @"C:\tmp\database.json";
-        private static IDataAccess _aj;
+        //private IOptions<DataAccessSettings> _appSettings;
+        private IConfiguration _config;
+        private IDataAccess _aj;
         private ICustomerService _customerService;
         private ILogger _logger; //not testing the logging part at this stage
 
         public CustomerControllerTests_JsonFile()
         {
+            //Read config file
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true);
+            _config = builder.Build();
+
             _aj = new AccessJSON();
-            _aj.Connection = filePath;
-            _customerService = new CustomerService(_aj);
+            _customerService = new CustomerService(_aj, _config) ;
             _logger = null;
         }
 
@@ -119,12 +128,12 @@ namespace GroceryStoreAPI.Controllers.Tests
         public void DeleteTest_DeleteCustomer()
         {
             CustomerController uc = new CustomerController(_customerService, null);
-            var result = uc.Delete(9);
+            var result = uc.Delete(12);
             Assert.IsNotNull(result);
             Assert.IsTrue(result.GetType() == typeof(NoContentResult));
 
             //Verify that the customer doesn't exist
-            var result1 = uc.GetById(9);
+            var result1 = uc.GetById(12);
             Assert.IsTrue(result1.GetType() == typeof(NotFoundObjectResult));
         }
 

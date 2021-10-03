@@ -3,23 +3,35 @@ using GroceryStoreAPI.Models;
 using GroceryStoreAPI.Services;
 using GroceryStoreAPITests.Controllers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
+using System.IO;
 
 namespace GroceryStoreAPI.Controllers.Tests
 {
     [TestClass()]
     public class CustomerControllerTest_InMemoryData
     {
-        private static IDataAccess _aj = new InMemoryData();
-        private ICustomerService _customerService = new CustomerService(_aj);
-        private ILogger _logger = null; //not testing the logging part at this stage
+        private IConfiguration _config;
+        private IDataAccess _imd;
+        private ICustomerService _customerService;
+        private ILogger _logger; //not testing the logging part at this stage
 
         public CustomerControllerTest_InMemoryData()
         {
-
-        }
+            //Read config file
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true);
+            _config = builder.Build();
+            
+            _imd = new InMemoryData();
+                
+            _customerService = new CustomerService(_imd, _config);
+            }
 
         [TestMethod()]
         public void GetTest_ReturnAllCustomers()
