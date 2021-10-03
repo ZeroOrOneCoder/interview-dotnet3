@@ -26,7 +26,9 @@ namespace GroceryStoreAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "GroceryStoreAPI", Version = "v1" });
             });
-            services.AddControllers();
+            services.AddControllers()
+                .AddNewtonsoftJson();
+                
             services.AddTransient<ICustomerService, CustomerService>();
             services.AddTransient<IDataAccess, AccessJSON>();
 

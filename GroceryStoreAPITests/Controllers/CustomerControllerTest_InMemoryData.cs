@@ -83,7 +83,7 @@ namespace GroceryStoreAPI.Controllers.Tests
         {
 
             CustomerController uc = new CustomerController(_customerService, null);
-            var result = uc.Add("Lisa");
+            var result = uc.Add(new Customer(-1, "Lisa"));
             Assert.IsNotNull(result);
             Assert.IsTrue(result.GetType() == typeof(CreatedResult));
             if (result != null)
@@ -99,7 +99,7 @@ namespace GroceryStoreAPI.Controllers.Tests
         {
 
             CustomerController uc = new CustomerController(_customerService, null);
-            var result = uc.Update(2, "Lilly");
+            var result = uc.Update(2, new Customer(2, "Lilly"));
             Assert.IsNotNull(result);
             Assert.IsTrue(result.GetType() == typeof(AcceptedResult));
             if (result != null)
@@ -114,7 +114,7 @@ namespace GroceryStoreAPI.Controllers.Tests
         {
 
             CustomerController uc = new CustomerController(_customerService, null);
-            var result = uc.Update(53, "Unknown");
+            var result = uc.Update(53, new Customer(53, "Unknown"));
             Assert.IsNotNull(result);
             Assert.IsTrue(result.GetType() == typeof(NotFoundObjectResult));
             if (result != null)

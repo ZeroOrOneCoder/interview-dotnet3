@@ -41,10 +41,9 @@ namespace GroceryStoreAPI.Services
             return _accessJson.AddItem(custName);
         }
 
-        public bool UpdateCustomer(int id, string name)
-        {
-            Customer c = new Customer(id, name);
-            return _accessJson.UpdateItem(c);
+        public bool UpdateCustomer(Customer customer)
+        {            
+            return _accessJson.UpdateItem(customer);
         }
 
         //public bool DeleteCustomer(Customer c)

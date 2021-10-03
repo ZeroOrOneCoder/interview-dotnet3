@@ -9,7 +9,7 @@ namespace GroceryStoreAPI.Data
     public class AccessJSON : IDataAccess
     {
         //TODO: this needs to be retrieved from appsetings.json
-        private string connection = "database.json";
+        private string connection = string.Empty;
 
         public string Connection { set { connection = value; }}
        
@@ -54,15 +54,14 @@ namespace GroceryStoreAPI.Data
             return output;
         }
 
-        public Customer AddItem(string custName)
-        {
-            Customer output = null;
+        public Customer AddItem(string custName)        {
+            
             CustomerList cList = ReadJsonFile();
             CompareCustomer compareCust = new CompareCustomer();
             cList.Customers.Sort((IComparer<Customer>)compareCust);
             int Id = cList.Customers[cList.Customers.Count - 1].id + 1;
-            output = new Customer(Id, custName);
-
+            Customer output = new Customer(Id, custName);
+           
             cList.Customers.Add(output);
 
             WriteJsonFile(cList);

@@ -57,9 +57,13 @@ namespace GroceryStoreAPI.Controllers
 
         // POST api/<CustomerController>
         [HttpPost]
-        public IActionResult Add([FromBody] string value)
+        //public IActionResult Add([FromBody] string name)
+        public IActionResult Add([FromBody] Customer customer)
+
         {
-            Customer item = _customerService.AddCustomer(value);
+            _logger.LogInformation($"New customer {customer.name} to be added.");
+
+            Customer item = _customerService.AddCustomer(customer.name);
             if (item != null)
             {
                 string relativePath = string.Format("/api/customer/{0}", item.id);
@@ -67,26 +71,33 @@ namespace GroceryStoreAPI.Controllers
             }
             else
             {
-                return NotFound(value);
+                return NotFound(customer.name);
             }
         }
 
         // PUT api/<CustomerController>/5
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] string value)
+        //public IActionResult Update(int id, [FromBody] string name)
+        public IActionResult Update(int id, [FromBody] Customer customer)
         {
-            if (!ModelState.IsValid)
+            _logger.LogInformation($"New customer {customer.id} and {customer.name} to be added.");
+
+            if (id != customer.id)
+            {
+                return BadRequest("Mismatched customer Id.");
+            }
+            else if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
-            if (_customerService.UpdateCustomer(id, value))
+            if (_customerService.UpdateCustomer(customer))
             {
-                string relativePath = string.Format("/api/customer/{0}", id);
-                return Accepted(new Uri(relativePath, UriKind.Relative), id);
+                string relativePath = string.Format("/api/customer/{0}", customer.id);
+                return Accepted(new Uri(relativePath, UriKind.Relative), customer.name);
             }
             else
             {
-                return NotFound(id);
+                return NotFound(customer.id);
             }
         }
 

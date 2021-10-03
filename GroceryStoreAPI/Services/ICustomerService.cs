@@ -11,7 +11,7 @@ namespace GroceryStoreAPI.Services
 
         public Customer AddCustomer(string custName);
 
-        public bool UpdateCustomer(int id, string name);
+        public bool UpdateCustomer(Customer customer);
 
         //public bool DeleteCustomer(int id);
 

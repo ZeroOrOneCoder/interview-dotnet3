@@ -12,11 +12,11 @@ namespace GroceryStoreAPITests.Controllers
         {
             testCustomers = new List<Customer>();
             //List
-            testCustomers.Add(new Customer(1, "Bob"));
-            testCustomers.Add(new Customer(2, "Mary"));
-            testCustomers.Add(new Customer(3, "Joe"));
-            testCustomers.Add(new Customer(4, "Jill"));
-            testCustomers.Add(new Customer(5, "Kevin"));
+            //testCustomers(new Customer(1, "Bob"));
+            //testCustomers.Add(new Customer(2, "Mary"));
+            //testCustomers.Add(new Customer(3, "Joe"));
+            //testCustomers.Add(new Customer(4, "Jill"));
+            //testCustomers.Add(new Customer(5, "Kevin"));
         }
 
         public string Connection { set { connection = value; } }
@@ -42,10 +42,8 @@ namespace GroceryStoreAPITests.Controllers
 
         public Customer AddItem(string custName)
         {
-            Customer output = null;
-
             int Id = testCustomers[testCustomers.Count - 1].id + 1;
-            output = new Customer(Id, custName);
+            Customer output = new Customer(Id, custName);            
 
             testCustomers.Add(output);
             return output;

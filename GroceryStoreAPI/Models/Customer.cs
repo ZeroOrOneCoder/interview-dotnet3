@@ -10,8 +10,7 @@ namespace GroceryStoreAPI.Models
             id = cid;
             name = cname;
         }
-        [Required]
-        [JsonRequired]
+        
         [JsonProperty("id")]
         public int id { get; set; }
 
