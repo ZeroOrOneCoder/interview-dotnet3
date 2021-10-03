@@ -18,7 +18,7 @@ namespace GroceryStoreAPI.Controllers.Tests
         private IConfiguration _config;
         private IDataAccess _imd;
         private ICustomerService _customerService;
-        private ILogger _logger; //not testing the logging part at this stage
+        private ILogger<CustomerController> _logger; 
 
         public CustomerControllerTest_InMemoryData()
         {
@@ -31,13 +31,15 @@ namespace GroceryStoreAPI.Controllers.Tests
             _imd = new InMemoryData();
                 
             _customerService = new CustomerService(_imd, _config);
+
+            _logger = LoggerFactory.Create(builder => { builder.AddEventLog(); }).CreateLogger<CustomerController>();
             }
 
         [TestMethod()]
         public void GetTest_ReturnAllCustomers()
         {
 
-            CustomerController uc = new CustomerController(_customerService, null);
+            CustomerController uc = new CustomerController(_customerService, _logger);
             var result = uc.Get();
             Assert.IsNotNull(result);
             Assert.IsTrue(result.GetType() == typeof(OkObjectResult));
@@ -56,7 +58,7 @@ namespace GroceryStoreAPI.Controllers.Tests
         public void GetByIdTest_ReturnCustomer2()
         {
 
-            CustomerController uc = new CustomerController(_customerService, null);
+            CustomerController uc = new CustomerController(_customerService, _logger);
             var result = uc.GetById(2);
             Assert.IsNotNull(result);
             Assert.IsTrue(result.GetType() == typeof(OkObjectResult));
@@ -72,7 +74,7 @@ namespace GroceryStoreAPI.Controllers.Tests
         public void GetByIdTest_ShouldNotFind()
         {
 
-            CustomerController uc = new CustomerController(_customerService, null);
+            CustomerController uc = new CustomerController(_customerService, _logger);
             var result = uc.GetById(99);
             Assert.IsTrue(result.GetType() == typeof(NotFoundObjectResult));
 
@@ -82,7 +84,7 @@ namespace GroceryStoreAPI.Controllers.Tests
         public void AddTest_AddNewCustomer()
         {
 
-            CustomerController uc = new CustomerController(_customerService, null);
+            CustomerController uc = new CustomerController(_customerService, _logger);
             var result = uc.Add(new Customer(-1, "Lisa"));
             Assert.IsNotNull(result);
             Assert.IsTrue(result.GetType() == typeof(CreatedResult));
@@ -98,7 +100,7 @@ namespace GroceryStoreAPI.Controllers.Tests
         public void UpdateTest_UpdateCustomer2()
         {
 
-            CustomerController uc = new CustomerController(_customerService, null);
+            CustomerController uc = new CustomerController(_customerService, _logger);
             var result = uc.Update(2, new Customer(2, "Lilly"));
             Assert.IsNotNull(result);
             Assert.IsTrue(result.GetType() == typeof(AcceptedResult));
@@ -113,7 +115,7 @@ namespace GroceryStoreAPI.Controllers.Tests
         public void UpdateTest_FailToUpdateNonExisingCustomer()
         {
 
-            CustomerController uc = new CustomerController(_customerService, null);
+            CustomerController uc = new CustomerController(_customerService, _logger);
             var result = uc.Update(53, new Customer(53, "Unknown"));
             Assert.IsNotNull(result);
             Assert.IsTrue(result.GetType() == typeof(NotFoundObjectResult));
@@ -128,7 +130,7 @@ namespace GroceryStoreAPI.Controllers.Tests
         public void DeleteTest_DeleteCustomer()
         {
 
-            CustomerController uc = new CustomerController(_customerService, null);
+            CustomerController uc = new CustomerController(_customerService, _logger);
             var result = uc.Delete(4);
             Assert.IsNotNull(result);
             Assert.IsTrue(result.GetType() == typeof(NoContentResult));
@@ -142,7 +144,7 @@ namespace GroceryStoreAPI.Controllers.Tests
         public void DeleteTest_FailToDeleteNonExitingCustomer()
         {
 
-            CustomerController uc = new CustomerController(_customerService, null);
+            CustomerController uc = new CustomerController(_customerService, _logger);
             var result = uc.Delete(53);
             Assert.IsNotNull(result);
             Assert.IsTrue(result.GetType() == typeof(NotFoundObjectResult));

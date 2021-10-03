@@ -11,12 +11,12 @@ namespace GroceryStoreAPITests.Controllers
         public InMemoryData()
         {
             testCustomers = new List<Customer>();
-            //List
-            //testCustomers(new Customer(1, "Bob"));
-            //testCustomers.Add(new Customer(2, "Mary"));
-            //testCustomers.Add(new Customer(3, "Joe"));
-            //testCustomers.Add(new Customer(4, "Jill"));
-            //testCustomers.Add(new Customer(5, "Kevin"));
+            
+            testCustomers.Add(new Customer(1, "Bob"));
+            testCustomers.Add(new Customer(2, "Mary"));
+            testCustomers.Add(new Customer(3, "Joe"));
+            testCustomers.Add(new Customer(4, "Jill"));
+            testCustomers.Add(new Customer(5, "Kevin"));
         }
 
         public string Connection { set { connection = value; } }
