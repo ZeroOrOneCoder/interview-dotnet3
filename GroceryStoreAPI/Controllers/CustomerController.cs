@@ -67,7 +67,7 @@ namespace GroceryStoreAPI.Controllers
             if (item != null)
             {
                 string relativePath = string.Format("/api/customer/{0}", item.id);
-                return Created(new Uri(relativePath, UriKind.Relative), item.id);
+                return Created(new Uri(relativePath, UriKind.Relative), item);
             }
             else
             {
@@ -93,7 +93,7 @@ namespace GroceryStoreAPI.Controllers
             if (_customerService.UpdateCustomer(customer))
             {
                 string relativePath = string.Format("/api/customer/{0}", customer.id);
-                return Accepted(new Uri(relativePath, UriKind.Relative), customer.name);
+                return Accepted(new Uri(relativePath, UriKind.Relative), customer);
             }
             else
             {
